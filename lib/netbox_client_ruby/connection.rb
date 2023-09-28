@@ -1,5 +1,18 @@
 require 'faraday'
-require 'faraday_middleware' if Faraday::VERSION < '2'
+if Faraday::VERSION < '2'
+  begin
+    require 'faraday_middleware'
+  rescue LoadError
+    warn(<<~WARN)
+      For the current version of Faraday (#{Faraday::VERSION}),
+      "faraday_middleware" is a required peer dependency of
+      "netbox-client-ruby".  Please install "faraday_middleware" separately.
+      Otherwise, upgrade to Faraday 2, in which case, you will not need
+      "faraday_middleware" to work with "netbox-client-ruby".
+    WARN
+    raise
+  end
+end
 require 'faraday/detailed_logger'
 require 'netbox_client_ruby/error/local_error'
 
